@@ -1,0 +1,261 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'JetBrains Mono', 'Cascadia Mono', Consolas, monospace;
+}
+
+@theme inline {
+  --color-bg: var(--df-bg);
+  --color-panel: var(--df-panel);
+  --color-panel-2: var(--df-panel-2);
+  --color-line: var(--df-border);
+  --color-fg: var(--df-text);
+  --color-muted: var(--df-muted);
+  --color-primary: var(--df-primary);
+  --color-primary-fg: var(--df-primary-fg);
+  --color-danger: var(--df-danger);
+  --color-rh: var(--df-rh);
+  --color-lh: var(--df-lh);
+  --color-rf: var(--df-rf);
+  --color-lf: var(--df-lf);
+}
+
+:root {
+  color-scheme: dark;
+  --df-bg: #0a0b0d;
+  --df-panel: #121418;
+  --df-panel-2: #1a1d22;
+  --df-border: #262a31;
+  --df-text: #e8eaed;
+  --df-muted: #8d95a1;
+  --df-primary: #f2f3f5;
+  --df-primary-fg: #0a0b0d;
+  --df-danger: #f87171;
+  --df-rh: #f5a524;
+  --df-lh: #22d3ee;
+  --df-rf: #e44ad3;
+  --df-lf: #9b7bff;
+  --df-note-ink: #0a0b0d;
+  --df-grid-bar: rgba(255, 255, 255, 0.3);
+  --df-grid-beat: rgba(255, 255, 255, 0.13);
+  --df-grid-step: rgba(255, 255, 255, 0.05);
+  --df-row-alt: rgba(255, 255, 255, 0.022);
+  --df-bar-active: rgba(255, 255, 255, 0.035);
+  --df-playhead: #ffffff;
+  --df-focus: #7dd3fc;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --df-bg: #f3f4f6;
+  --df-panel: #ffffff;
+  --df-panel-2: #eceef2;
+  --df-border: #d6dae1;
+  --df-text: #14171c;
+  --df-muted: #586170;
+  --df-primary: #14171c;
+  --df-primary-fg: #ffffff;
+  --df-danger: #dc2626;
+  --df-rh: #d97706;
+  --df-lh: #0891b2;
+  --df-rf: #c026d3;
+  --df-lf: #7c3aed;
+  --df-note-ink: #ffffff;
+  --df-grid-bar: rgba(0, 0, 0, 0.38);
+  --df-grid-beat: rgba(0, 0, 0, 0.15);
+  --df-grid-step: rgba(0, 0, 0, 0.06);
+  --df-row-alt: rgba(0, 0, 0, 0.025);
+  --df-bar-active: rgba(0, 0, 0, 0.04);
+  --df-playhead: #111318;
+  --df-focus: #0369a1;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--df-bg);
+  color: var(--df-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--df-focus);
+  outline-offset: 2px;
+}
+
+input[type='range'] {
+  accent-color: var(--df-primary);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ───────────── Grade musical ───────────── */
+
+.grid-scroller {
+  scrollbar-width: thin;
+  scrollbar-color: var(--df-border) transparent;
+}
+
+.grid-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  pointer-events: none;
+}
+.grid-line[data-kind='bar'] {
+  background: var(--df-grid-bar);
+  width: 2px;
+  margin-left: -1px;
+}
+.grid-line[data-kind='beat'] {
+  background: var(--df-grid-beat);
+}
+.grid-line[data-kind='step'] {
+  background: var(--df-grid-step);
+}
+
+.grid-row:nth-child(even) {
+  background: var(--df-row-alt);
+}
+
+.note {
+  --c: var(--df-rh);
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: var(--note-size, 30px);
+  height: var(--note-size, 30px);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  border-radius: 999px;
+  border: 2px solid var(--c);
+  background: color-mix(in srgb, var(--c) 22%, var(--df-panel));
+  color: var(--df-text);
+  cursor: pointer;
+  transition:
+    transform 70ms ease-out,
+    box-shadow 70ms ease-out,
+    background-color 70ms ease-out;
+  z-index: 2;
+  padding: 0;
+  user-select: none;
+}
+.note[data-limb='leftHand'] {
+  --c: var(--df-lh);
+}
+.note[data-limb='rightFoot'] {
+  --c: var(--df-rf);
+  border-radius: 7px;
+}
+.note[data-limb='leftFoot'] {
+  --c: var(--df-lf);
+  border-radius: 7px;
+}
+.note[data-accent='true'] {
+  background: var(--c);
+  color: var(--df-note-ink);
+  border-width: 3px;
+}
+.note[data-ghost='true'] {
+  opacity: 0.6;
+  --note-size: 24px;
+}
+.note[data-offgrid='true'] {
+  border-style: dashed;
+}
+.note[data-selected='true'] {
+  box-shadow:
+    0 0 0 2px var(--df-bg),
+    0 0 0 4px var(--df-text);
+  z-index: 3;
+}
+.note[data-play='next'] {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 35%, transparent);
+}
+.note[data-play='active'] {
+  transform: translate(-50%, -50%) scale(1.28);
+  background: var(--c);
+  color: var(--df-note-ink);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--c) 45%, transparent),
+    0 0 22px 2px var(--c);
+  z-index: 4;
+  opacity: 1;
+}
+.note .accent-mark {
+  position: absolute;
+  top: -15px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--c);
+  letter-spacing: -1px;
+}
+.note .grace {
+  position: absolute;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin-top: -4.5px;
+  border-radius: 999px;
+  border: 1.5px solid var(--g);
+  background: color-mix(in srgb, var(--g) 35%, var(--df-panel));
+}
+
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--df-playhead);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--df-playhead) 60%, transparent);
+  pointer-events: none;
+  z-index: 5;
+  will-change: transform;
+}
+.playhead[data-hidden='true'] {
+  opacity: 0;
+}
+.playhead[data-idle='true'] {
+  opacity: 0.35;
+  box-shadow: none;
+}
+
+.limb-swatch {
+  width: 18px;
+  height: 18px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 800;
+  border: 2px solid var(--c);
+  background: color-mix(in srgb, var(--c) 22%, transparent);
+  border-radius: 999px;
+}
+.limb-swatch[data-foot='true'] {
+  border-radius: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note {
+    transition: none;
+  }
+}
+
+/* ───────────── Partitura ───────────── */
+.staff-note[data-play='active'] {
+  color: var(--df-lh);
+}
